@@ -1,0 +1,3 @@
+https://spellfoundry.com/2016/05/29/configuring-gpio-serial-port-raspbian-jessie-including-pi-3-4/
+
+https://www.electronicwings.com/raspberry-pi/raspberry-pi-uart-communication-using-python-and-c
