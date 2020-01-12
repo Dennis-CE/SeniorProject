@@ -2,13 +2,19 @@
 // 490.c
 // Raul Solorio. Geoffrey Grepo. 10/07/19
 // Made 1 motor spin
-// Made 2 motor spin
+// Made 2 motors spin
 // Now we will attempt to communicate TM4C to Pi. Pi will send a number indicating when to stop or start the motor
 
 // To make it easy on us, Pi will send character 'G' indicating Start
 // Pi will send character 'R' indicating Stop
 // If character recieved is 'G' then make motor spin continously -- Green LED turned on 
 // If character recieved is 'R' then make motor stop until told to start again -- Red LED turned on
+
+// 1-11-20 --> sent a '1' or '2' to make a single motor spin either or when pressed on realterm, 'a' to make all spin, 'r' to stop all.	
+// **NOTE: To change direction you have to change the dir on both when it steps on 1 and 0 **
+// Python script did the above performance, however we have to run the code every time we send 1,2,a, and r.
+// next step is to learn how to do it in C++
+// python script was just to know we configured UART correctly
 
 // UART 1 on PC4/PC5
 #include "SysTick.h"				// Delays
@@ -17,16 +23,16 @@
 #include "tm4c123gh6pm.h"		// contains all TM4C registers
 
 unsigned long volatile x;		// used in the for loop
-
 unsigned char commandMotor, previousCommandChar;
 
 void EnableInterrupts(void);
 void WaitForInterrupt(void);
 void PortF_Init(void);
 void PortB_Init(void);
+void motorSpin(unsigned long volatile motor); // which motor you want to spin -- hex value
 
-
-// ---------------------------UART0----------------------
+/*
+// ---------------------------UART0---------------------------------------------------------- Communicates with REALTERM
 // ------------UART_Init------------
 // Initialize the UART for 115200 baud rate (assuming 80 MHz UART clock),
 // 8 bit word length, no parity bits, one stop bit, FIFOs enabled
@@ -53,15 +59,22 @@ void UART_Init(void){
 // Input: none
 // Output: ASCII code for key typed or 0 if no character
 unsigned char UART_InCharNonBlocking(void){
-// as part of Lab 11, modify this program to use UART0 instead of UART1
   if((UART0_FR_R&UART_FR_RXFE) == 0){
     return((unsigned char)(UART0_DR_R&0xFF));
   } else{
     return 0;
   }
 }
+//------------UART_OutChar------------
+// Output 8-bit to serial port
+// Input: letter is an 8-bit ASCII character to be transferred
+// Output: none
+void UART_OutChar(unsigned char data){
+  while((UART0_FR_R&UART_FR_TXFF) != 0);
+  UART0_DR_R = data;
+}
 //-----------------------------------------------------------------------------
-
+*/
 
 // PB4 = Step
 // PB5 = Dir
@@ -80,7 +93,7 @@ void PortB_Init(void){unsigned long volatile delay;
 }
 
 // PortF Initialization fucntion
-// For Green, Blue, Red LED
+// For LED's
 void PortF_Init(void){ volatile unsigned long delay;
   SYSCTL_RCGC2_R |= 0x00000020;     // 1) F clock
   delay = SYSCTL_RCGC2_R;           // delay   
@@ -92,11 +105,22 @@ void PortF_Init(void){ volatile unsigned long delay;
   GPIO_PORTF_DEN_R |= 0x0E;         // 7) enable digital pins PF3,PF2,PF1       
 }
 
+void motorSpin(unsigned long volatile motor){
+				GPIO_PORTF_DATA_R = 0x08; 						// Turn on GREEN LED
+																							// Turn on motor
+				for(x=0;x<200*2;x++){									// motor steps per revolution = 200
+					GPIO_PORTB_DATA_R = motor;					// motor goes one way. Dir = 0 (or 1 for the other direction)..Step = 1
+					SysTick_Wait(80000);								// wait 1000 microseconds (1000*10^-6)  --> (1000*10^-6) / (1/80Mhz) = 80000 ---> Change this to 80Mhz
+					GPIO_PORTB_DATA_R = 0x00;						// motors goes same way. Dir = 0 (or 1)... Step = 0 --> needs to see a transition from 1 to 0 to step
+					SysTick_Wait(80000);								// wait 1000 microseconds (1000*10^-6)  --> (1000*10^-6) / (1/80Mhz) = 80000 ---> Change this to 80Mhz
+				}		
+}
+
 int main(void){ 
 	PLL_Init();															// Bus Clock at 80Mhz
 	PortB_Init(); 													// Controls Step and Dir
 	
-	UART_Init();	// UART0 for testing
+	//UART_Init();												// UART0 for testing
 	
 	UART1_Init();														// Initializes UART1
 	PortF_Init();														// Onboard LED's
@@ -104,18 +128,50 @@ int main(void){
 	SysTick_Init();													// using 80Mhz clock for delay
   previousCommandChar = 'r';
 	while(1){
-			commandMotor = UART_InCharNonBlocking(); // Change it to UART1_...
+			commandMotor = UART1_InCharNonBlocking(); // (Non blocking allows the code to run without waiting for next input)
 			
-			if(commandMotor == 'g'){
-				previousCommandChar = 'g';
+			if(commandMotor == '1'){
+				previousCommandChar = '1';
+			}
+			else if(commandMotor == '2'){
+				previousCommandChar = '2';
 			}
 			else if(commandMotor == 'r'){
 				previousCommandChar = 'r';
 			}
+			else if(commandMotor == 'a'){
+				previousCommandChar = 'a';
+			}			
 			else{
 				previousCommandChar = previousCommandChar;
 			}
-		
+			
+			if (previousCommandChar == '1'){
+					motorSpin(0x10);
+			}
+			else if(previousCommandChar == '2'){
+					motorSpin(0x40);
+			}
+			else if(previousCommandChar == 'a'){
+					motorSpin(0x50);
+			}			
+			else if(previousCommandChar == 'r'){
+					GPIO_PORTF_DATA_R = 0x02; //Turn on RED LED
+					//Stop motor
+			}			
+			
+			/*
+			if(commandMotor == 'g'){
+				previousCommandChar = 'g';
+				//UART_OutChar(commandMotor);
+			}
+			else if(commandMotor == 'r'){
+				previousCommandChar = 'r';
+				//UART_OutChar(commandMotor);
+			}
+			else{
+				previousCommandChar = previousCommandChar;
+			}
 		
 			if (previousCommandChar == 'g'){
 					GPIO_PORTF_DATA_R = 0x08; // Turn on GREEN LED
@@ -127,9 +183,10 @@ int main(void){
 						SysTick_Wait(80000);								// wait 1000 microseconds (1000*10^-6)  --> (1000*10^-6) / (1/80Mhz) = 80000 ---> Change this to 80Mhz
 					}	
 			}
-			if(previousCommandChar == 'r'){
+			else if(previousCommandChar == 'r'){
 					GPIO_PORTF_DATA_R = 0x02; //Turn on RED LED
 					//Stop motor
 			}
+	*/
 	}
 }
