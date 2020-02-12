@@ -1,0 +1,22 @@
+WiringPi is not working since his thing is down -->
+https://git.drogon.net/?p=wiringPi;a=summary
+so someone created a copy of his -->
+https://github.com/WiringPi/WiringPi-Python/issues/40
+
+C setup example --> uses GPIO12
+https://www.electronicwings.com/raspberry-pi/how-to-use-wiringpi-library-on-raspberry-pi
+
+Python setup example --> uses GPIO4
+https://pimylifeup.com/raspberry-pi-gpio/
+
+C++ setup example --> uses GPIO17
+https://www.youtube.com/watch?v=BfnExtPv7BM
+https://www.digikey.com/en/maker/blogs/2019/how-to-use-gpio-on-the-raspberry-pi-with-c
+
+**NOTE: when compile do something like --> sudo g++ main.cpp -o main -lwiringPi --> sudo ./main**
+** -lwiringPi links the program!!**
+https://projects.drogon.net/raspberry-pi/wiringpi/download-and-install/
+&
+https://www.raspberrypi.org/forums/viewtopic.php?t=7583
+
+talks about linking the program problem
