@@ -29,10 +29,12 @@
 #include "PLL.h" 						 // in case we need to overclock
 #include "UART.h"						 // UART 1
 #include "tm4c123gh6pm.h"		 // contains all TM4C registers
+#include <stdlib.h>					 // for atoi
 
 unsigned long volatile x, i; // used in the for loop
 unsigned char commandMotor;	 // UART character
-unsigned int sec, rot, rotDeg, degStep; // time to cook
+unsigned int sec, rot, rotDeg, degStep, j; // time to cook
+
 
 void EnableInterrupts(void);
 void WaitForInterrupt(void);
@@ -156,18 +158,24 @@ int main(void){
 	EnableInterrupts();												// for interrupts
 	SysTick_Init();														// using 80Mhz clock for delay
 	while(1){
+			char InStringg[5];  									// stores incoming string containing time (in seconds) information
+			char TimeInt[4];											// stores just the string containing the time number (basically copy of InString without 'f')
 			GPIO_PORTF_DATA_R = 0x02; 					  // Turn on RED LED
 			GPIO_PORTA_DATA_R = 0x3C; 					  // motors in this port off
 			GPIO_PORTD_DATA_R = 0x0C; 					  // motors in this port off
 			GPIO_PORTE_DATA_R = 0x20; 					  // motors in this port off
 			GPIO_PORTB_DATA_R = 0x02; 					  // motors in this port off	
-			commandMotor = UART1_InChar();				// waits for the next char --> code should stop here
-			sec = 20; 					 									// how many seconds we want it to rotate (could be cooker or belts)
+			UART1_InString(InStringg,5);					// takes in string up to 5 char
+			for(j=0;j<3;j++)										  // iterate through string array InString to get separate numbers ex: (['f', '2', '6', '2'])
+			{
+				TimeInt[j] = InStringg[j+1]; 				// copy numbers to new char array ex: (['2','6',2'])
+			}
+			sec = atoi(TimeInt);									// convert string to integer
 			rot = sec / 0.5; 	 										// how many rotations it will take --> 0.5 depends on the overall wait time between step transition 1->0
 			rotDeg = 360 * rot; 									// how many total degrees equal the rotation
-			degStep = rotDeg / 1.8;								// how many steps will it take to complete it								
+			degStep = rotDeg / 1.8;								// how many steps will it take to complete it --> motor moves 1.8 degrees per step			
 			
-			if (commandMotor == 'f'){						
+			if (InStringg[0] == 'f'){						
 				GPIO_PORTF_DATA_R = 0x08; 					// Turn on GREEN LED indicating motors on
 				//*********************************Fridge portion**********************************************************************			
 				GPIO_PORTA_DATA_R = 0x3C; 
@@ -218,7 +226,7 @@ int main(void){
 				Delay(3);																	 // .21 seconds * 3?
 				GPIO_PORTA_DATA_R = 0x1C;									 // turn on motor 11
 				degreeSpin('E',0x2C,0x28,100,1000000);   	 // "motor 11" slowly turns 180 degrees back to original position, turn off motor 12
-				GPIO_PORTA_DATA_R = 0x3C; 								 // turn off motor 11, other motors should be off
+				GPIO_PORTA_DATA_R = 0x3C; 								 // turn off motor 11, other motors should be off		
 				/*				
 					while sensor != 1 --> sensor doesn't detect anything but there is a food processing
 						degreeSpin(0x14, 0x04, 7200);// last around 14 seonds???  turn motor 6 on

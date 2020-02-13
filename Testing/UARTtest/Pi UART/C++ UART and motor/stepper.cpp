@@ -106,7 +106,8 @@ int main()
 			}
 		        digitalWrite(8,1);	   // turn off motor
 			delay(1000);		   // wait 1000 milliseconds
-			serialPutchar(fd,'f');	   // send char 'f' via UART
+			//serialPutchar(fd,'f');	   // send char 'f' via UART
+			serialPuts(fd,"f30\r\n");
 		}
 		else
 		{
