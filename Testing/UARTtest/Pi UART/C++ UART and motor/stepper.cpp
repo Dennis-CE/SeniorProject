@@ -1,6 +1,6 @@
 #include <iostream>
-#include <wiringPi.h>
-#include <wiringSerial.h>
+#include <wiringPi.h>				// GPIO library
+#include <wiringSerial.h>			// serial library
 
 using namespace std;
 
@@ -54,8 +54,8 @@ int main()
 				delay(1);	   // wait 1ms
 			}
 		        digitalWrite(2,1);	   // turn off motor
-			delay(1000);		   // wait 1000 milliseconds
-			serialPutchar(fd, 'f');	   // sent char 'f' via UART
+			delay(1000);		   // wait 1000 millisecond
+			serialPuts(fd,"f30\r");	   // sends string "f30" via UART...TM4C needs to see 'ENTER' aka \r\n towork
 		}
 		else if(slot == 2)
 		{
@@ -81,7 +81,7 @@ int main()
 			}
 		        digitalWrite(5,1);	   // turn off motor
 			delay(1000);		   // wait 1000 milliseconds
-			serialPutchar(fd,'f');	   // send char 'f' via UART
+			serialPuts(fd,"f30\r");	   // sends string "f30" via UART...TM4C needs to see 'ENTER' aka \r\n towork
 		}
 		else if(slot == 3)
 		{	
@@ -106,12 +106,10 @@ int main()
 			}
 		        digitalWrite(8,1);	   // turn off motor
 			delay(1000);		   // wait 1000 milliseconds
-			//serialPutchar(fd,'f');	   // send char 'f' via UART
-			serialPuts(fd,"f30\r\n");
+			serialPuts(fd,"f30\r");	   // sends string "f30" via UART...TM4C needs to see 'ENTER' aka \r\n towork
 		}
 		else
 		{
-			serialPutchar(fd,'r');	   // send char 'r' via UART
 			digitalWrite(2,1);	   // turn off motor 
 			digitalWrite(5,1);	   // turn off motor
 			digitalWrite(8,1);	   // turn off motor
