@@ -79,7 +79,7 @@ void PortB_Init(void){unsigned long volatile delay;
   GPIO_PORTB_DEN_R |= 0xFF;         // 7) enable digital pins PB7-PB0  
 }
 
-// PD2 = NOT ENABLE --> motor 6
+// PD2 = NOT E0NABLE --> motor 6
 // PD3 = NOT ENABLE --> motor 7
 void PortD_Init(void){unsigned long volatile delay;
   SYSCTL_RCGC2_R |= 0x00000008;     // 1) D clock
@@ -158,15 +158,15 @@ int main(void){
 	EnableInterrupts();												// for interrupts
 	SysTick_Init();														// using 80Mhz clock for delay
 	while(1){
-			char InStringg[5];  									// stores incoming string containing time (in seconds) information
-			char TimeInt[4];											// stores just the string containing the time number (basically copy of InString without 'f')
+			char InStringg[3];  									// stores incoming string containing time (in seconds) information
+			char TimeInt[2];											// stores just the string containing the time number (basically copy of InString without 'f')
 			GPIO_PORTF_DATA_R = 0x02; 					  // Turn on RED LED
 			GPIO_PORTA_DATA_R = 0x3C; 					  // motors in this port off
 			GPIO_PORTD_DATA_R = 0x0C; 					  // motors in this port off
 			GPIO_PORTE_DATA_R = 0x20; 					  // motors in this port off
 			GPIO_PORTB_DATA_R = 0x02; 					  // motors in this port off	
-			UART1_InString(InStringg,5);					// takes in string up to 5 char
-			for(j=0;j<3;j++)										  // iterate through string array InString to get separate numbers ex: (['f', '2', '6', '2'])
+			UART1_InString(InStringg,3);					// takes in string up to 5 char
+			for(j=0;j<2;j++)										  // iterate through string array InString to get separate numbers ex: (['f', '2', '6', '2'])
 			{
 				TimeInt[j] = InStringg[j+1]; 				// copy numbers to new char array ex: (['2','6',2'])
 			}
@@ -174,12 +174,13 @@ int main(void){
 			rot = sec / 0.5; 	 										// how many rotations it will take --> 0.5 depends on the overall wait time between step transition 1->0
 			rotDeg = 360 * rot; 									// how many total degrees equal the rotation
 			degStep = rotDeg / 1.8;								// how many steps will it take to complete it --> motor moves 1.8 degrees per step			
+			UART1_OutString(InStringg);
 			
 			if (InStringg[0] == 'f'){						
 				GPIO_PORTF_DATA_R = 0x08; 					// Turn on GREEN LED indicating motors on
 				//*********************************Fridge portion**********************************************************************			
-				GPIO_PORTA_DATA_R = 0x3C; 
-				GPIO_PORTD_DATA_R = 0x0C;
+				//GPIO_PORTA_DATA_R = 0x3C; 
+				//GPIO_PORTD_DATA_R = 0x0C;
 				GPIO_PORTE_DATA_R = 0x20;									 // All these motors on these ports will turn motor NOT ENABLE active thus motor off except motor 5		--> Hmm maybe these 3 lines could be deleted since its already at this point when it's at 'r'
 				degreeSpin('B',0x01,0x00,600,300000);  		 // 2700 degrees, motors 5 last around ... seconds giving it time to put food on next conveyor belt  ** CORRECT CODE FOR BELT
 				GPIO_PORTB_DATA_R = 0x02;									 // previously other motors are off thus motor 5 is the only one we need to turn off, "all motors off"
