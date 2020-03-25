@@ -84,7 +84,6 @@ int main()
 		{
 			digitalWrite(2,1);	   // turn off motor 
 			digitalWrite(5,1);	   // turn off motor
-			digitalWrite(8,1);	   // turn off motor
 		}
 	}
 }
