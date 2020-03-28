@@ -62,8 +62,8 @@ void PortB_Init(void){unsigned long volatile delay;
 // PD1 = Dir	--> Motor 7
 // PD2 = Step	--> motor 8
 // PD3 = Dir	--> Motor 8
-// PD4 = Step --> motor 9
-// PD5 = NOT ENABLE	--> Motor 9
+// PD6 = Step --> motor 9
+// PD7 = NOT ENABLE	--> Motor 9
 void PortD_Init(void){unsigned long volatile delay;
   SYSCTL_RCGC2_R |= 0x00000008;     // 1) D clock
 	delay = SYSCTL_RCGC2_R;						// delay
@@ -150,7 +150,7 @@ int main(void){
 			GPIO_PORTF_DATA_R = 0x02; 					  // Turn on RED LED
 			GPIO_PORTA_DATA_R = 0x3C; 					  // motors in this port off
 			GPIO_PORTB_DATA_R = 0x12; 					  // motors in this port off		
-			GPIO_PORTD_DATA_R = 0x20; 					  // motors in this port off
+			GPIO_PORTD_DATA_R = 0x80; 					  // motors in this port off
 			UART1_InString(InStringg,4);					// takes in string up to 4 char
 			for(j=0;j<3;j++)										  // iterate through string array InString to get separate numbers ex: (['f', '2', '6', '2'])
 			{
@@ -199,13 +199,13 @@ int main(void){
 				GPIO_PORTA_DATA_R = 0x34; 								 // Turn off motor 5 and turn on motor 6
 				degreeSpin('B',0xD2,0x92,200,80000);   	 	 // motor 6 slowly grips bowl turning 360 degrees (grab bowl)
 				GPIO_PORTA_DATA_R = 0x3C;									 // turn off motor 6, other motors should be off
-				Delay(3);																	 // .21 seconds * 3?	
+				Delay(3);																	 // .21 seconds * 3?
 				GPIO_PORTA_DATA_R = 0x2C;									 // turn on motor 7	
-				degreeSpin('D',0x21,0x20,100,45000); 		   // move motor 7 slowly 180 degrees (drop ingredients)
+				degreeSpin('D',0x81,0x80,100,45000); 		   // move motor 7 slowly 180 degrees (drop ingredients)
 				GPIO_PORTA_DATA_R = 0x3C; 								 // turn off motor 7, other motors should be off
 				Delay(3);																	 // .21 seconds * 3?
 				GPIO_PORTA_DATA_R = 0x2C;									 // turn on motor 7
-				degreeSpin('D',0x23,0x22,100,45000); 		   // move motor 7 180 degrees back (have bowl to original position and not upsidedown)
+				degreeSpin('D',0x83,0x82,100,45000); 		   // move motor 7 180 degrees back (have bowl to original position and not upsidedown)
 				GPIO_PORTA_DATA_R = 0x3C; 								 // turn off motor 7, other motors should be off		
 				Delay(3);																	 // .21 secods *3?
 				GPIO_PORTA_DATA_R = 0x34; 								 // Turn on motor 6
@@ -213,19 +213,19 @@ int main(void){
 				GPIO_PORTA_DATA_R = 0x3C;									 // turn off motor 6, other motors should be off
 				Delay(3);																	 // .21 secods *3?
 				GPIO_PORTA_DATA_R = 0x1C;									 // turn on motor 8
-				degreeSpin('D',0x24,0x20,25,1000000);  		 // motor 8 slowly turns 45 degrees (pot tilts food)
+				degreeSpin('D',0x84,0x80,25,1000000);  		 // motor 8 slowly turns 45 degrees (pot tilts food)
 				GPIO_PORTA_DATA_R = 0x3C; 								 // turn off motor 8, other motors should be off
 				Delay(3);																	 // .21 seconds * 3?
-				degreeSpin('D',0x10,0x00,degStep,500000);  // turns on motor 9 and turns 36000 degrees for certain amount of time (cooks food)
-				GPIO_PORTD_DATA_R = 0x20;									 // turn off motor 9, other motors should be off
+				degreeSpin('D',0x40,0x00,degStep,500000);  // turns on motor 9 and turns 36000 degrees for certain amount of time (cooks food)
+				GPIO_PORTD_DATA_R = 0x80;									 // turn off motor 9, other motors should be off
 				Delay(3);																	 // .21 seconds * 3?
 				GPIO_PORTA_DATA_R = 0x1C;									 // turn on motor 8
-				degreeSpin('D',0x24,0x20,75,1000000);      // motor 8 slowly turns 135 degrees (dropping finished food on new bowl)
+				degreeSpin('D',0x84,0x80,75,1000000);      // motor 8 slowly turns 135 degrees (dropping finished food on new bowl)
 				GPIO_PORTA_DATA_R = 0x3C; 								 // turn off motor 8, other motors should be off
 				Delay(3);																	 // .21 seconds * 3?
 				GPIO_PORTA_DATA_R = 0x1C;									 // turn on motor 8
-				degreeSpin('D',0x2C,0x28,100,1000000);   	 // "motor 8" slowly turns 180 degrees back (original position)
-				GPIO_PORTA_DATA_R = 0x3C; 								 // turn off motor 9, other motors should be off		
+				degreeSpin('D',0x8C,0x88,100,1000000);   	 // "motor 8" slowly turns 180 degrees back (original position)
+				GPIO_PORTA_DATA_R = 0x3C; 								 // turn off motor 8, other motors should be off		
 			}
 	}
 }
