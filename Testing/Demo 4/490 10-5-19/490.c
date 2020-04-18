@@ -1,6 +1,6 @@
 // 0.Documentation Section 
 // 490.c
-// Raul Solorio. Geoffrey Grepo. 3/24/20
+// Raul Solorio. Geoffrey Grepo. 4/17/20
 // UART 1 on PC4/PC5 --> PC4 = RX ; PC5 = TX;
 // ADC on PE3
 
@@ -67,6 +67,7 @@ void PortB_Init(void){unsigned long volatile delay;
 void PortD_Init(void){unsigned long volatile delay;
   SYSCTL_RCGC2_R |= 0x00000008;     // 1) D clock
 	delay = SYSCTL_RCGC2_R;						// delay
+	GPIO_PORTD_LOCK_R = 0x4C4F434B;		// unlock PortD PD7
   GPIO_PORTD_CR_R |= 0xFF;          // allow changes to PD7-PD0         
 	GPIO_PORTD_AMSEL_R &= ~0xFF;      // 3) disable analog function for PD7-PD0
 	GPIO_PORTD_PCTL_R |= 0x00000000;  // Configure PD7-PD0 to GPIO
@@ -229,3 +230,4 @@ int main(void){
 			}
 	}
 }
+
