@@ -71,9 +71,9 @@ int main()
 			digitalWrite(4,0);	   // spin clockwise
 			for(int x=0; x<50; x++)    // spin 90 degrees
 			{
-				digitalWrite(3,1); // wait 1ms
+				digitalWrite(3,1); 
 				delay(1);          // wait 1ms
-				digitalWrite(3,0); // wait 1ms
+				digitalWrite(3,0); 
 				delay(1);	   // wait 1ms
 			}
 			digitalWrite(5,1);	   // turn off motor
