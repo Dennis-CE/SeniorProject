@@ -1,0 +1,58 @@
+UPDATES/UPGRADES
+
+https://www.raspberrypi.org/documentation/raspbian/updating.md (update rasp pi)
+--> sudo apt update
+--> sudo apt full-upgrade
+--> sudo apt-get autoremove
+=====================================================================================================================
+MINICOM
+
+https://www.raspberrypi.org/forums/viewtopic.php?t=223711 (minicom for uart debugging purpose)
+--> sudo apt-get install minicom
+to run for FUD --> minicom -b 38400 -D /dev/serial0
+**MAKE SURE MINICOM IS OPENED IN A SEPARATE TERMINAL WINDOW.. RUN YOUR PROGRAM ON A SEPARATE TERMINAL WINDOW**
+=====================================================================================================================
+UART Config
+
+https://spellfoundry.com/2016/05/29/configuring-gpio-serial-port-raspbian-jessie-including-pi-3-4/
+**FOLLOW ALL STEPS FROM THIS WEBSITE**
+-->  sudo nano /boot/config.txt (add -->  enable_uart=1)
+-->  sudo reboot now
+--> sudo systemctl stop serial-getty@ttyS0.service
+       sudo systemctl disable serial-getty@ttyS0.service
+--> sudo nano /boot/cmdline.txt (remove console=serial0,115200)
+--> sudo reboot now
+--> sudo nano /boot/config.txt (add --> dtoverlay=pi3-miniuart-bt)
+--> sudo reboot now
+--> ls -l /dev
+====================================================================================================================
+WiringPi
+
+https://projects.drogon.net/raspberry-pi/wiringpi/download-and-install/
+** FOLLOW STEPS FOR WiringPi ; WiringPi contains GPIO and UART usage within your program**
+**NOTE: He took down his wiring Pi code on Github; Someone else cloned his files and we could use that one insead**
+ **WEBSITE that gives us the git command to clone it: https://github.com/WiringPi/WiringPi-Python/issues/40 **
+
+--> sudo apt-get install git-core
+--> git clone https://github.com/wiringpi/wiringpi  
+--> cd wiringPi
+--> ./build
+====================================================================================================================
+Create Program
+
+https://www.digikey.com/en/maker/blogs/2019/how-to-use-gpio-on-the-raspberry-pi-with-c
+https://projects.drogon.net/raspberry-pi/wiringpi/serial-library/
+--> sudo nano stepper.cpp
+**Create your program, make sure you include all libraries and configure all outputs/inputs. Initialize wiringPi setup and open up the serial port**
+--> Ctrl+X (To exit code: Press Y and enter to save it)
+===================================================================================================================
+Build the program
+
+https://projects.drogon.net/raspberry-pi/wiringpi/download-and-install/
+**NOTE: Make sure to include -lwiringPi at the end**
+--> sudo g++ stepper.cpp -o stepper -lwiringPi
+===================================================================================================================
+Run the program
+
+--> sudo ./stepper
+--> (Press 1 or 2 to start cooking process)
