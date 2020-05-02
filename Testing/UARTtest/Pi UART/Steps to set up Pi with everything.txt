@@ -35,7 +35,7 @@ https://projects.drogon.net/raspberry-pi/wiringpi/download-and-install/
 
 --> sudo apt-get install git-core
 --> git clone https://github.com/wiringpi/wiringpi  
---> cd wiringPi
+--> cd wiringpi (or wiringPi)
 --> ./build
 ====================================================================================================================
 Create Program
