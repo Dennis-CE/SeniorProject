@@ -17,8 +17,8 @@ int main()
 	pinMode(3,OUTPUT); 		       // GPIO22 STEP
 	pinMode(4,OUTPUT);                     // GPIO23 DIR
 	pinMode(5,OUTPUT);                     // GPIO24 ~EN ; MOTOR 2	
-	//digitalWrite(2,1);	   // turn off motor 
-	//digitalWrite(5,1);	   // turn off motor
+	digitalWrite(2,1);	   // turn off motor 
+	digitalWrite(5,1);	   // turn off motor
 	
 	while(1)
 	{
