@@ -1,5 +1,5 @@
 // CECS SENIOR PROJECT
-// redo
+// showing code
 #include <iostream>
 #include <wiringPi.h>				// GPIO library
 #include <wiringSerial.h>			// serial library
