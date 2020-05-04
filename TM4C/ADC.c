@@ -23,7 +23,7 @@
  */
 
 #include "ADC.h"
-#include "..//tm4c123gh6pm.h"
+#include "tm4c123gh6pm.h"
 
 // SS2 ( Sample Sequencer) (# of samples: 4 & Depth of FIFO: 4)
 // This initialization function sets up the ADC 
