@@ -28,7 +28,9 @@ int main()
 	pinMode(3, OUTPUT); 		// GPIO22 STEP
 	pinMode(4, OUTPUT);		// GPIO23 DIR
 	pinMode(5, OUTPUT);		// GPIO24 ~EN ; MOTOR 2	
-
+	digitalWrite(2,1);		// Turn off motor at start
+	digitalWrite(5,1);		// Turn off motor at start
+	
 	while (1)
 	{
 		curl_easy_setopt(curl, CURLOPT_URL, "http://sproject.highridgeroofing.com/index.php?Mode=2");	// URL where data is obtained from 
