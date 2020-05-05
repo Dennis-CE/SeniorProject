@@ -28,6 +28,8 @@ void degreeSpin(unsigned char ports, unsigned long volatile motor, unsigned long
 // PA3 = NOT ENABLE --> motor 6
 // PA4 = NOT ENABLE --> motor 7
 // PA5 = NOT ENABLE --> motor 8
+// PA6 = DIR MOTOR 7
+// PA7 = DIR Motor 6
 void PortA_Init(void){unsigned long volatile delay;
   SYSCTL_RCGC2_R |= 0x00000001;     // 1) A clock
 	delay = SYSCTL_RCGC2_R;						// delay	
@@ -46,7 +48,6 @@ void PortA_Init(void){unsigned long volatile delay;
 // PB4 = NOT ENABLE --> motor 4
 // PB5 = Step --> motor 5
 // PB6 = Step --> motor 6
-// PB7 = Dir	--> motor 6
 void PortB_Init(void){unsigned long volatile delay;
   SYSCTL_RCGC2_R |= 0x00000002;     // 1) B clock
 	delay = SYSCTL_RCGC2_R;						// delay
@@ -59,7 +60,7 @@ void PortB_Init(void){unsigned long volatile delay;
 }
 
 // PD0 = Step	--> motor 7
-// PD1 = Dir	--> Motor 7
+
 // PD2 = Step	--> motor 8
 // PD3 = Dir	--> Motor 8
 // PD6 = Step --> motor 9
@@ -171,12 +172,10 @@ int main(void){
 				}
 				sensorFlag = 0;														 // reset flag	
 				*/
-				
 				degreeSpin('B',0x11,0x10,490,80000);
 				GPIO_PORTB_DATA_R = 0x12; 	  		    		 // stop "all motors" --> only motor 3 was turned on thus turn it off
 				Delay(6);																   // .21 seconds * 6
 				degreeSpin('B',0x06,0x02,100,80000);    	 // move motor 4 180 degrees (open door)				
-				//GPIO_PORTB_DATA_R = 0x12; 	  		    		 // stop "all motors" --> motor 4 off --> commented since we want it to lock when door is up
 				Delay(6);																	 // .21 seconds * 6		
 				degreeSpin('B',0x01,0x00,400,80000);  		 // turn motor 3 on, 720 degrees, move motor 3 forward to send food out the door (motor 4 also on to lock door)
 				GPIO_PORTB_DATA_R = 0x02; 	  		    		 // stop motor 3, leave motor 4 on						
@@ -190,25 +189,21 @@ int main(void){
 				Delay(6);																	 // .21 seconds * 6				
 				
 				//*********************************Cooker portion**********************************************************************				
-				GPIO_PORTA_DATA_R = 0x34; 								 // Turn on motor 6
-				degreeSpin('B',0xD2,0x92,200,45000);   	 	 // motor 6 slowly grips bowl turning 360 degrees (grab claw)
-				GPIO_PORTA_DATA_R = 0x3C;									 // turn off motor 6, other motors should be off
-				Delay(20);																 // .21 secods *3?
 				
+				GPIO_PORTA_DATA_R = 0xB4; 								 // Turn on motor 6
+				degreeSpin('B',0x52,0x12,150,80000);   	 	 // motor 6 slowly grips bowl turning 360 degrees (grab claw)
+				Delay(3);																 // .21 secods *3?
 				GPIO_PORTA_DATA_R = 0x2C;									 // turn on motor 7	
-				degreeSpin('D',0x83,0x82,4000,45000); 		 // move motor 7 360 deg x20 back (drop ingredients)
-				GPIO_PORTA_DATA_R = 0x3C; 								 // turn off motor 7, other motors should be off
+				degreeSpin('D',0x83,0x82,8500,45000); 		 // move motor 7 360 deg x20 back (drop ingredients)
 				Delay(10);																 // .21 seconds * 10
-				GPIO_PORTA_DATA_R = 0x2C;									 // turn on motor 7
-				degreeSpin('D',0x81,0x80,4000,45000); 		 // move motor 7, rotate 360 deg x20 (have bowl to original position and not upsidedown)
+				GPIO_PORTA_DATA_R = 0x6C;									 // motor 7 other direction
+				degreeSpin('D',0x81,0x80,8500,45000); 		 // move motor 7, rotate 360 deg x20 (have bowl to original position and not upsidedown)
 				GPIO_PORTA_DATA_R = 0x3C; 								 // turn off motor 7, other motors should be off		
 				Delay(10);																 // .21 secods *10
-				
 				GPIO_PORTA_DATA_R = 0x34; 								 // Turn off motor 5 and turn on motor 6
-				degreeSpin('B',0x52,0x12,200,80000);		 	 // move motor 6 360 degrees back (claw lets go of the bowl)				
+				degreeSpin('B',0x52,0x12,150,80000);		 	 // move motor 6 360 degrees back (claw lets go of the bowl)				
 				GPIO_PORTA_DATA_R = 0x3C;									 // turn off motor 6, other motors should be off
-				Delay(20);																 // .21 seconds * 20
-				
+				Delay(15);																 // .21 seconds * 20
 				GPIO_PORTA_DATA_R = 0x1C;									 // turn on motor 8
 				degreeSpin('D',0x8C,0x88,800,45000);  		 // motor 8 slowly turns 360 degrees x4 (pot tilts food)
 				GPIO_PORTA_DATA_R = 0x3C; 								 // turn off motor 8, other motors should be off
@@ -217,11 +212,11 @@ int main(void){
 				GPIO_PORTD_DATA_R = 0x80;									 // turn off motor 9, other motors should be off
 				Delay(20);																 // .21 seconds * 20
 				GPIO_PORTA_DATA_R = 0x1C;									 // turn on motor 8
-				degreeSpin('D',0x8C,0x88,1000,45000);      // motor 8 slowly turns 360 degrees x5 (dropping finished food on new bowl)
+				degreeSpin('D',0x8C,0x88,4800,45000);      // motor 8 slowly turns 360 degrees x5 (dropping finished food on new bowl)
 				GPIO_PORTA_DATA_R = 0x3C; 								 // turn off motor 8, other motors should be off
 				Delay(20);																 // .21 seconds * 20
 				GPIO_PORTA_DATA_R = 0x1C;									 // turn on motor 8
-				degreeSpin('D',0x84,0x80,1800,45000);   	 // "motor 8" slowly turns 360 degrees x9 back (original position)
+				degreeSpin('D',0x84,0x80,5600,45000);   	 // "motor 8" slowly turns 360 degrees x9 back (original position)
 				GPIO_PORTA_DATA_R = 0x3C; 								 // turn off motor 8, other motors should be off	
 			}
 	}
