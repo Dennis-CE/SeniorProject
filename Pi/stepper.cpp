@@ -1,5 +1,5 @@
 // CECS SENIOR PROJECT
-// showing code
+
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
