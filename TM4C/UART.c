@@ -64,7 +64,7 @@ void UART1_Init(void){
   GPIO_PORTC_DEN_R   |= 0x30;           // enable digital I/O on PC5-4
                                         // configure PC5-4 as UART1
   GPIO_PORTC_PCTL_R = (GPIO_PORTC_PCTL_R&0xFF00FFFF)+0x00220000;
-  GPIO_PORTC_AMSEL_R &= ~0x30;          // disable analog functionality on PC5-4
+  GPIO_PORTC_AMSEL_R &= ~0x30;          // disable analog functionality on PC5-4	
 }
 
 //------------UART1_InChar------------

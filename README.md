@@ -1,2 +1,2 @@
 # SeniorProject
-CECS 490A - Fall 2019
+CECS 490 - FALL 2019 and Spring 2020
