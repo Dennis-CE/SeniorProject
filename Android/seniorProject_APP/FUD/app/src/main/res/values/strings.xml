@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">FUD</string>
+    <string name="title_home">Home</string>
+    <string name="title_history">History</string>
+    <string name="title_profile">Profile</string>
+    <string name="order_now">Order Now</string>
+    <string name="delayed_order">Delayed Order</string>
+    <string name="cancel_order">Cancel Order</string>
+    <string name="title_activity_order_list"> </string>
+    <string name="title_activity_dish"> </string>
+    <string name="title_activity_set_order"> </string>
+    <string name="title_activity_delayed_order"> </string>
+    <string name="title_activity_cancel_order"> </string>
+    <string name="set_time">Set Time</string>
+    <string name="orders_on_queue">Orders On Queue</string>
+    <string name="product_logo">Product Logo</string>
+    <string name="content_order"><![CDATA[place holder <title> and <time>]]></string>
+    <string name="favorite">Favorite</string>
+    <string name="current_queue">Queue</string>
+</resources>
